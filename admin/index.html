@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UZUM Admin</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --purple: #7C3AED;
+      --purple-dark: #5B21B6;
+      --pink: #EC4899;
+      --gradient: linear-gradient(135deg, var(--purple), var(--pink));
+      --bg: #0F0A1E;
+      --card-bg: #1A1240;
+      --card-border: rgba(124,58,237,0.2);
+      --text: #F5F3FF;
+      --text-muted: #9CA3AF;
+      --success: #10B981;
+      --danger: #EF4444;
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* Login */
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: radial-gradient(ellipse at center, #1A1240 0%, #0F0A1E 70%);
+    }
+    .login-box {
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+    }
+    .login-box .logo {
+      font-size: 40px;
+      font-weight: 900;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 3px;
+      margin-bottom: 8px;
+    }
+    .login-box .tagline {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+    .login-box input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 15px;
+      outline: none;
+      margin-bottom: 12px;
+    }
+    .login-box input:focus { border-color: var(--purple); }
+    .login-box .btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--gradient);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .login-box .error {
+      color: var(--danger);
+      font-size: 13px;
+      margin-top: 12px;
+      min-height: 20px;
+    }
+
+    /* App Layout */
+    .app-layout { display: none; }
+    .app-layout.active { display: flex; }
+    .sidebar {
+      width: 260px;
+      min-height: 100vh;
+      background: var(--card-bg);
+      border-right: 1px solid var(--card-border);
+      padding: 20px 0;
+      position: fixed;
+      left: 0;
+      top: 0;
+    }
+    .sidebar .logo {
+      font-size: 28px;
+      font-weight: 900;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 2px;
+      padding: 0 24px;
+      margin-bottom: 32px;
+    }
+    .sidebar .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 24px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 15px;
+      transition: all 0.2s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+    .sidebar .nav-item:hover {
+      background: rgba(124,58,237,0.1);
+      color: var(--text);
+    }
+    .sidebar .nav-item.active {
+      background: rgba(124,58,237,0.15);
+      color: var(--purple-light);
+      border-right: 3px solid var(--purple);
+    }
+    .sidebar .admin-user {
+      margin-top: auto;
+      padding: 16px 24px;
+      border-top: 1px solid var(--card-border);
+      font-size: 13px;
+      color: var(--text-muted);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+    .sidebar .admin-user .logout-btn {
+      color: var(--danger);
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    .main-content {
+      margin-left: 260px;
+      padding: 24px;
+      width: calc(100% - 260px);
+      min-height: 100vh;
+    }
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+    .page-section h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .stat-card .stat-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .stat-card .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+    }
+    .stat-card .stat-value.green { color: var(--success); }
+    .stat-card .stat-value.red { color: var(--danger); }
+    .stat-card .stat-value.purple { color: var(--purple-light); }
+
+    /* Tables */
+    .table-container {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th {
+      text-align: left;
+      padding: 14px 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.03);
+    }
+    td {
+      padding: 12px 16px;
+      font-size: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    tr:last-child td { border-bottom: none; }
+    .badge {
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .badge-success { background: rgba(16,185,129,0.15); color: var(--success); }
+    .badge-warning { background: rgba(245,158,11,0.15); color: #F59E0B; }
+    .badge-danger { background: rgba(239,68,68,0.15); color: var(--danger); }
+    .badge-info { background: rgba(124,58,237,0.15); color: var(--purple-light); }
+    .action-btn {
+      padding: 6px 14px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 0 2px;
+    }
+    .action-btn.approve { background: rgba(16,185,129,0.2); color: var(--success); }
+    .action-btn.reject { background: rgba(239,68,68,0.2); color: var(--danger); }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      padding: 16px;
+    }
+    .pagination button {
+      padding: 6px 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      color: var(--text);
+      cursor: pointer;
+    }
+    .pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .pagination span { font-size: 14px; color: var(--text-muted); }
+    .search-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .search-bar input, .search-bar select {
+      padding: 10px 14px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+    .search-bar select option { background: var(--card-bg); }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 10px; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Login -->
+  <div class="login-page" id="login-page">
+    <div class="login-box">
+      <div class="logo">UZUM</div>
+      <div class="tagline">Admin Panel</div>
+      <input type="text" id="admin-username" placeholder="Admin username" value="admin">
+      <input type="password" id="admin-password" placeholder="Password" value="admin123">
+      <button class="btn" onclick="adminLogin()">Sign In</button>
+      <div class="error" id="admin-error"></div>
+    </div>
+  </div>
+
+  <!-- App Layout -->
+  <div class="app-layout" id="app-layout">
+    <div class="sidebar">
+      <div class="logo">UZUM</div>
+      <button class="nav-item active" data-section="dashboard">📊 Dashboard</button>
+      <button class="nav-item" data-section="users">👥 Users</button>
+      <button class="nav-item" data-section="orders">📋 Orders</button>
+      <button class="nav-item" data-section="withdrawals">💳 Withdrawals</button>
+      <div class="admin-user">
+        👤 <span id="admin-username-display">admin</span>
+        <span class="logout-btn" onclick="adminLogout()">[Logout]</span>
+      </div>
+    </div>
+    <div class="main-content">
+      <!-- Dashboard -->
+      <div class="page-section active" id="section-dashboard">
+        <h2>📊 Dashboard</h2>
+        <div class="stats-grid" id="stats-grid"></div>
+      </div>
+
+      <!-- Users -->
+      <div class="page-section" id="section-users">
+        <h2>👥 Users</h2>
+        <div class="table-container">
+          <table>
+            <thead><tr>
+              <th>ID</th><th>Username</th><th>VIP</th><th>Balance</th><th>Earnings</th><th>Recharge</th><th>Withdrawn</th><th>Orders</th><th>Created</th>
+            </tr></thead>
+            <tbody id="users-table-body"></tbody>
+          </table>
+          <div class="pagination" id="users-pagination"></div>
+        </div>
+      </div>
+
+      <!-- Orders -->
+      <div class="page-section" id="section-orders">
+        <h2>📋 Orders</h2>
+        <div class="table-container">
+          <table>
+            <thead><tr>
+              <th>ID</th><th>User</th><th>Product</th><th>Commission</th><th>Status</th><th>Date</th>
+            </tr></thead>
+            <tbody id="orders-table-body"></tbody>
+          </table>
+          <div class="pagination" id="orders-pagination"></div>
+        </div>
+      </div>
+
+      <!-- Withdrawals -->
+      <div class="page-section" id="section-withdrawals">
+        <h2>💳 Withdrawals</h2>
+        <div class="search-bar">
+          <select id="withdrawal-filter" onchange="loadWithdrawals(1)">
+            <option value="all">All</option>
+            <option value="pending" selected>Pending</option>
+            <option value="completed">Completed</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead><tr>
+              <th>ID</th><th>User</th><th>Amount</th><th>Status</th><th>Date</th><th>Actions</th>
+            </tr></thead>
+            <tbody id="withdrawals-table-body"></tbody>
+          </table>
+          <div class="pagination" id="withdrawals-pagination"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = '';
+    let adminToken = null;
+    let currentPage = { users: 1, orders: 1, withdrawals: 1 };
+
+    // Sidebar navigation
+    document.querySelectorAll('.sidebar .nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.sidebar .nav-item').forEach(n => n.classList.remove('active'));
+        item.classList.add('active');
+        const section = item.dataset.section;
+        document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+        document.getElementById('section-' + section).classList.add('active');
+        if (section === 'dashboard') loadDashboard();
+        if (section === 'users') loadUsers(1);
+        if (section === 'orders') loadOrders(1);
+        if (section === 'withdrawals') loadWithdrawals(1);
+      });
+    });
+
+    async function adminApi(path, options = {}) {
+      const headers = { 'Content-Type': 'application/json' };
+      if (adminToken) headers['Authorization'] = `Bearer ${adminToken}`;
+      const res = await fetch(API + path, { ...options, headers });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      return data;
+    }
+
+    async function adminLogin() {
+      const username = document.getElementById('admin-username').value;
+      const password = document.getElementById('admin-password').value;
+      const errEl = document.getElementById('admin-error');
+      try {
+        const data = await adminApi('/api/admin/login', {
+          method: 'POST',
+          body: JSON.stringify({ username, password })
+        });
+        adminToken = data.token;
+        document.getElementById('admin-username-display').textContent = data.username;
+        document.getElementById('login-page').style.display = 'none';
+        document.getElementById('app-layout').classList.add('active');
+        loadDashboard();
+      } catch (err) {
+        errEl.textContent = err.message;
+      }
+    }
+
+    function adminLogout() {
+      adminToken = null;
+      document.getElementById('app-layout').classList.remove('active');
+      document.getElementById('login-page').style.display = '';
+    }
+
+    // ===== DASHBOARD =====
+    async function loadDashboard() {
+      try {
+        const stats = await adminApi('/api/admin/stats');
+        document.getElementById('stats-grid').innerHTML = `
+          <div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-value purple">${stats.total_users}</div></div>
+          <div class="stat-card"><div class="stat-label">Total Orders</div><div class="stat-value">${stats.total_orders}</div></div>
+          <div class="stat-card"><div class="stat-label">Total Recharge</div><div class="stat-value green">$${(stats.total_recharge || 0).toLocaleString()}</div></div>
+          <div class="stat-card"><div class="stat-label">Total Commission</div><div class="stat-value green">$${(stats.total_commission || 0).toLocaleString()}</div></div>
+          <div class="stat-card"><div class="stat-label">Today Orders</div><div class="stat-value purple">${stats.today_orders}</div></div>
+          <div class="stat-card"><div class="stat-label">Today Recharge</div><div class="stat-value">$${(stats.today_recharge || 0).toLocaleString()}</div></div>
+          <div class="stat-card"><div class="stat-label">Pending Withdrawals</div><div class="stat-value red">${stats.pending_withdrawals}</div></div>
+          <div class="stat-card"><div class="stat-label">Total Withdrawn</div><div class="stat-value">$${(stats.total_withdrawal || 0).toLocaleString()}</div></div>
+        `;
+      } catch (err) { console.error(err); }
+    }
+
+    // ===== USERS =====
+    async function loadUsers(page) {
+      currentPage.users = page;
+      try {
+        const data = await adminApi(`/api/admin/users?page=${page}&limit=20`);
+        const tbody = document.getElementById('users-table-body');
+        tbody.innerHTML = data.users.map(u => `
+          <tr>
+            <td>${u.id}</td>
+            <td>${u.username}</td>
+            <td><span class="badge badge-info">VIP ${u.vip_level}</span></td>
+            <td>$${(u.balance || 0).toFixed(2)}</td>
+            <td>$${(u.total_commission || 0).toFixed(2)}</td>
+            <td>$${(u.total_recharge || 0).toFixed(2)}</td>
+            <td>$${(u.total_withdrawal || 0).toFixed(2)}</td>
+            <td>${u.order_count}</td>
+            <td>${new Date(u.created_at).toLocaleDateString()}</td>
+          </tr>
+        `).join('');
+        renderPagination('users-pagination', data.page, data.totalPages, loadUsers);
+      } catch (err) { console.error(err); }
+    }
+
+    // ===== ORDERS =====
+    async function loadOrders(page) {
+      currentPage.orders = page;
+      try {
+        const data = await adminApi(`/api/admin/orders?page=${page}&limit=20`);
+        const tbody = document.getElementById('orders-table-body');
+        tbody.innerHTML = data.orders.map(o => `
+          <tr>
+            <td>${o.id}</td>
+            <td>${o.user_name}</td>
+            <td>${o.product_image || '📦'} ${o.product_name}</td>
+            <td class="green">$${(o.commission || 0).toFixed(2)}</td>
+            <td><span class="badge badge-success">${o.status}</span></td>
+            <td>${new Date(o.created_at).toLocaleString()}</td>
+          </tr>
+        `).join('');
+        renderPagination('orders-pagination', data.page, data.totalPages, loadOrders);
+      } catch (err) { console.error(err); }
+    }
+
+    // ===== WITHDRAWALS =====
+    async function loadWithdrawals(page) {
+      currentPage.withdrawals = page;
+      const filter = document.getElementById('withdrawal-filter').value;
+      try {
+        const url = filter && filter !== 'all' ? `/api/admin/transactions?status=${filter}&page=${page}&limit=20` : `/api/admin/transactions?page=${page}&limit=20`;
+        const data = await adminApi(url);
+        const tbody = document.getElementById('withdrawals-table-body');
+        const filtered = data.transactions.filter(t => t.type === 'withdrawal');
+        tbody.innerHTML = filtered.map(t => `
+          <tr>
+            <td>${t.id}</td>
+            <td>${t.username}</td>
+            <td>$${(t.amount || 0).toFixed(2)}</td>
+            <td>
+              <span class="badge ${t.status === 'completed' ? 'badge-success' : t.status === 'pending' ? 'badge-warning' : 'badge-danger'}">${t.status}</span>
+            </td>
+            <td>${new Date(t.created_at).toLocaleString()}</td>
+            <td>
+              ${t.status === 'pending' ? `
+                <button class="action-btn approve" onclick="approveWithdrawal(${t.id})">✅ Approve</button>
+                <button class="action-btn reject" onclick="rejectWithdrawal(${t.id})">❌ Reject</button>
+              ` : '-'}
+            </td>
+          </tr>
+        `).join('');
+        if (filtered.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">No withdrawals found</td></tr>';
+        }
+        const total = data.total;
+        const totalPages = Math.ceil(total / 20);
+        renderPagination('withdrawals-pagination', page, totalPages, loadWithdrawals);
+      } catch (err) { console.error(err); }
+    }
+
+    async function approveWithdrawal(id) {
+      if (!confirm('Approve this withdrawal?')) return;
+      try {
+        await adminApi('/api/admin/withdrawal/approve', { method: 'POST', body: JSON.stringify({ id }) });
+        loadWithdrawals(currentPage.withdrawals);
+        loadDashboard();
+      } catch (err) { alert(err.message); }
+    }
+
+    async function rejectWithdrawal(id) {
+      if (!confirm('Reject this withdrawal? (Funds will be refunded)')) return;
+      try {
+        await adminApi('/api/admin/withdrawal/reject', { method: 'POST', body: JSON.stringify({ id }) });
+        loadWithdrawals(currentPage.withdrawals);
+        loadDashboard();
+      } catch (err) { alert(err.message); }
+    }
+
+    function renderPagination(containerId, page, totalPages, loaderFn) {
+      const container = document.getElementById(containerId);
+      if (totalPages <= 1) { container.innerHTML = ''; return; }
+      container.innerHTML = `
+        <button ${page <= 1 ? 'disabled' : ''} onclick="${loaderFn.name}(${page - 1})">← Prev</button>
+        <span>Page ${page} / ${totalPages}</span>
+        <button ${page >= totalPages ? 'disabled' : ''} onclick="${loaderFn.name}(${page + 1})">Next →</button>
+      `;
+    }
+
+    // Auto-login if navigating from frontend
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check URL for auto-login
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('auto') === '1') {
+        document.getElementById('admin-username').value = 'admin';
+        document.getElementById('admin-password').value = 'admin123';
+        adminLogin();
+      }
+    });
+  </script>
+</body>
+</html>
