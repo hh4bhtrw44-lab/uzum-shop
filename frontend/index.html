@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>UZUM</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ========== LOGIN PAGE ========== -->
+  <div id="page-login" class="page active">
+    <div class="login-container">
+      <div class="login-brand">
+        <div class="login-logo">UZUM</div>
+        <p class="login-tagline">Your Premium Shopping Platform</p>
+      </div>
+      <div class="login-tabs">
+        <button class="login-tab active" data-tab="login">Sign In</button>
+        <button class="login-tab" data-tab="register">Register</button>
+      </div>
+      <form id="login-form" class="login-form active">
+        <div class="form-group">
+          <input type="text" id="login-username" placeholder="Username" required>
+        </div>
+        <div class="form-group">
+          <input type="password" id="login-password" placeholder="Password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+        <p class="login-error" id="login-error"></p>
+      </form>
+      <form id="register-form" class="login-form">
+        <div class="form-group">
+          <input type="text" id="reg-username" placeholder="Choose a username" required>
+        </div>
+        <div class="form-group">
+          <input type="password" id="reg-password" placeholder="Create a password" required>
+        </div>
+        <div class="form-group">
+          <input type="password" id="reg-confirm" placeholder="Confirm password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+        <p class="login-error" id="reg-error"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========== MAIN APP ========== -->
+  <div id="page-app" class="page">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo-small">UZUM</div>
+      </div>
+      <div class="header-center">
+        <span class="header-welcome" id="header-welcome">Hi, User</span>
+      </div>
+      <div class="header-right">
+        <span class="badge-vip" id="header-vip">VIP 1</span>
+      </div>
+    </header>
+
+    <!-- Content area -->
+    <main class="app-content" id="app-content">
+      <!-- ===== HOME ===== -->
+      <div class="tab-content active" id="tab-home">
+        <!-- VIP Cards -->
+        <section class="vip-section">
+          <h2 class="section-title">VIP Tiers</h2>
+          <div class="vip-cards" id="vip-cards"></div>
+        </section>
+
+        <!-- Commission Scroll -->
+        <section class="comm-section">
+          <h2 class="section-title">🔥 Recent Commissions</h2>
+          <div class="comm-scroll" id="comm-scroll"></div>
+        </section>
+
+        <!-- New Products -->
+        <section class="product-section">
+          <h2 class="section-title">🆕 New Arrivals</h2>
+          <div class="product-grid" id="home-products"></div>
+        </section>
+      </div>
+
+      <!-- ===== PRODUCTS ===== -->
+      <div class="tab-content" id="tab-products">
+        <div class="page-header">
+          <h2>🛍️ Grab Orders</h2>
+          <span class="daily-count" id="daily-count">Today: 0/5</span>
+        </div>
+        <div class="product-grid" id="all-products"></div>
+        <div class="load-more" id="load-more-products">
+          <button class="btn btn-outline">Load More</button>
+        </div>
+      </div>
+
+      <!-- ===== ORDERS ===== -->
+      <div class="tab-content" id="tab-orders">
+        <div class="page-header">
+          <h2>📋 My Orders</h2>
+        </div>
+        <div class="order-list" id="order-list"></div>
+        <div class="load-more" id="load-more-orders" style="display:none">
+          <button class="btn btn-outline">Load More</button>
+        </div>
+        <div class="empty-state" id="empty-orders">
+          <span class="empty-icon">📦</span>
+          <p>No orders yet. Start grabbing!</p>
+        </div>
+      </div>
+
+      <!-- ===== WALLET ===== -->
+      <div class="tab-content" id="tab-wallet">
+        <div class="wallet-card">
+          <div class="wallet-balance">
+            <span class="wallet-label">Balance</span>
+            <span class="wallet-amount" id="wallet-balance">$0.00</span>
+          </div>
+          <div class="wallet-commission">
+            <span class="wallet-label">Total Earnings</span>
+            <span class="wallet-amount" id="wallet-total-commission">$0.00</span>
+          </div>
+        </div>
+        <div class="wallet-actions">
+          <button class="btn btn-primary" onclick="showRecharge()">💰 Deposit</button>
+          <button class="btn btn-outline" onclick="showWithdraw()">💳 Withdraw</button>
+        </div>
+        <div class="wallet-ref-section">
+          <h3>🔗 Referral Code</h3>
+          <div class="ref-code" id="ref-code">UZXXXX</div>
+          <p class="ref-hint">Share this code to earn commissions!</p>
+        </div>
+      </div>
+
+      <!-- ===== PROFILE ===== -->
+      <div class="tab-content" id="tab-profile">
+        <div class="profile-header">
+          <div class="profile-avatar">👤</div>
+          <h3 id="profile-username">Username</h3>
+          <span class="badge-vip" id="profile-vip">VIP 1</span>
+        </div>
+        <div class="profile-stats">
+          <div class="stat-item">
+            <span class="stat-label">Orders</span>
+            <span class="stat-value" id="profile-orders">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Balance</span>
+            <span class="stat-value" id="profile-balance">$0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Earnings</span>
+            <span class="stat-value" id="profile-earnings">$0</span>
+          </div>
+        </div>
+        <div class="profile-section">
+          <h3>⚙️ Settings</h3>
+          <div class="profile-menu">
+            <div class="profile-menu-item" onclick="showRecharge()">
+              <span>💰 Deposit</span>
+              <span>→</span>
+            </div>
+            <div class="profile-menu-item" onclick="showWithdraw()">
+              <span>💳 Withdraw</span>
+              <span>→</span>
+            </div>
+            <div class="profile-menu-item" onclick="logout()">
+              <span>🚪 Logout</span>
+              <span>→</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-tab="home">🏠<span>Home</span></button>
+      <button class="nav-item" data-tab="products">🛍️<span>Grab</span></button>
+      <button class="nav-item" data-tab="orders">📋<span>Orders</span></button>
+      <button class="nav-item" data-tab="wallet">💳<span>Wallet</span></button>
+      <button class="nav-item" data-tab="profile">👤<span>Profile</span></button>
+    </nav>
+  </div>
+
+  <!-- ========== MODALS ========== -->
+  <!-- Recharge Modal -->
+  <div class="modal-overlay" id="recharge-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>💰 Deposit Funds</h3>
+        <button class="modal-close" onclick="closeModal('recharge-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Amount ($)</label>
+          <div class="quick-amounts">
+            <button class="quick-amount" data-amount="100">$100</button>
+            <button class="quick-amount" data-amount="500">$500</button>
+            <button class="quick-amount" data-amount="1000">$1,000</button>
+            <button class="quick-amount" data-amount="5000">$5,000</button>
+          </div>
+          <input type="number" id="recharge-amount" placeholder="Enter amount" min="1">
+        </div>
+        <button class="btn btn-primary btn-full" onclick="doRecharge()">Deposit Now</button>
+        <p class="modal-result" id="recharge-result"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Withdraw Modal -->
+  <div class="modal-overlay" id="withdraw-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>💳 Withdraw Funds</h3>
+        <button class="modal-close" onclick="closeModal('withdraw-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="withdraw-info">Available balance: <strong id="withdraw-balance">$0.00</strong></p>
+        <div class="form-group">
+          <label>Amount ($)</label>
+          <input type="number" id="withdraw-amount" placeholder="Enter amount" min="1">
+        </div>
+        <button class="btn btn-primary btn-full" onclick="doWithdraw()">Withdraw</button>
+        <p class="modal-result" id="withdraw-result"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
